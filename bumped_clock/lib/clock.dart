@@ -3,12 +3,23 @@ import 'dart:ui' as ui;
 import 'dart:math' as math;
 import 'package:analog_clock/bumped_image.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_clock_helper/model.dart';
+import 'package:intl/intl.dart';
 import 'clock_helpers.dart';
 
 class Clock extends StatefulWidget {
-  const Clock({@required this.time}) : assert(time != null);
+  const Clock(
+      {this.shouldReload = false,
+      @required this.time,
+      this.is24HourFormat = false,
+      @required this.weatherCondition,
+      })
+      : assert(time != null),
+        assert(weatherCondition != null);
+  final bool shouldReload;
   final DateTime time;
+  final bool is24HourFormat;
+  final WeatherCondition weatherCondition;
   @override
   State<StatefulWidget> createState() {
     return ClockState();
@@ -16,19 +27,25 @@ class Clock extends StatefulWidget {
 }
 
 class ClockState extends State<Clock> with TickerProviderStateMixin {
-  GlobalKey _key =
-      GlobalKey(); // Needed to determine the available size for the clock face generation
+  // bool shouldReload;
+  // bool is24HourFormat;
+  // WeatherCondition weatherCondition;
+  // Needed to determine the available size for the clock face generation
+  GlobalKey _key = GlobalKey();
   Size _size;
   Orientation _currentOrientation;
   ImageBumpMapper _imageBumpMapper;
   int _lightRadius;
   AnimationController _lightMovementController;
   Animation<Offset> _lightOffset;
+
   DateTime _currentHourAndMin;
 
   @override
   Widget build(BuildContext context) {
-    _resetIfOrientationChanged(context);
+    if (widget.shouldReload || _hasOrientationChanged(context)) {
+      _reload(MediaQuery.of(context).orientation);
+    }
 
     return Center(
         key: _key,
@@ -51,24 +68,12 @@ class ClockState extends State<Clock> with TickerProviderStateMixin {
         )));
   }
 
-  // if the orientation of the device has changed, we need to reset data in order to generate a new clock face according to the new size available
-  void _resetIfOrientationChanged(BuildContext context) {
-    var actualOrientation = MediaQuery.of(context).orientation;
-    if (_currentOrientation == null) {
-      _currentOrientation = actualOrientation;
-    }
-
-    if (_currentOrientation != actualOrientation) {
-      _reset(actualOrientation);
-    }
-  }
-
-  void _reset(Orientation actualOrientation) {
+  void _reload(Orientation orientation) {
     _key = GlobalKey();
     _imageBumpMapper = null;
     _size = null;
-    _currentOrientation = actualOrientation;
     _lightRadius = null;
+    _currentOrientation = orientation;
   }
 
   Size _getSize() {
@@ -78,7 +83,11 @@ class ClockState extends State<Clock> with TickerProviderStateMixin {
     }
     if (_size == null) {
       final RenderBox renderBox = _key.currentContext.findRenderObject();
-      _size = renderBox.size;
+      if (renderBox.hasSize) {
+        _size = renderBox.size;
+      } else {
+        return Size.zero; // similar as above, getting size returns an exception if hasSize returns false
+      }
     }
     return _size;
   }
@@ -114,18 +123,15 @@ class ClockState extends State<Clock> with TickerProviderStateMixin {
     final pictureRecorder = new ui.PictureRecorder();
     final canvas = new Canvas(pictureRecorder);
 
-    _ClockFaceGeneratorPainter(time: widget.time).paint(canvas, size);
+    _ClockFaceGeneratorPainter(
+            time: widget.time, is24HourFormat: widget.is24HourFormat)
+        .paint(canvas, size);
     _currentHourAndMin = widget.time;
     final ui.Image face = await pictureRecorder
         .endRecording()
         .toImage(size.width.floor(), size.height.floor());
     return face;
   }
-
-  bool _hasHourOrMinuteChanged() =>
-      _currentHourAndMin != null &&
-      (_currentHourAndMin.hour != widget.time.hour ||
-          _currentHourAndMin.minute != widget.time.minute);
 
   void _animateLight() {
     final center = (Offset.zero & _getSize()).center;
@@ -173,6 +179,15 @@ class ClockState extends State<Clock> with TickerProviderStateMixin {
             parent: _lightMovementController,
             curve: Interval(0.0, 1.0, curve: Curves.elasticInOut)));
   }
+
+  bool _hasHourOrMinuteChanged() =>
+      _currentHourAndMin != null &&
+      (_currentHourAndMin.hour != widget.time.hour ||
+          _currentHourAndMin.minute != widget.time.minute);
+
+  bool _hasOrientationChanged(BuildContext context) {
+    return _currentOrientation != MediaQuery.of(context).orientation;
+  }
 }
 
 // Responsible for drawing intentionally blurred clock face, depending on the available size.
@@ -192,8 +207,9 @@ class _ClockFaceGeneratorPainter extends CustomPainter {
     55: '55'
   };
 
-  const _ClockFaceGeneratorPainter({this.time}) : assert(time != null);
+  const _ClockFaceGeneratorPainter({this.time, this.is24HourFormat});
   final DateTime time;
+  final bool is24HourFormat;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -229,7 +245,8 @@ class _ClockFaceGeneratorPainter extends CustomPainter {
       canvas.drawParagraph(
           paragraphBuilder.build()
             ..layout(ui.ParagraphConstraints(
-                width: _calculateSecondParagraphWidth(second, secondsFontSize))),
+                width:
+                    _calculateSecondParagraphWidth(second, secondsFontSize))),
           secondPosition);
     });
   }
@@ -245,7 +262,7 @@ class _ClockFaceGeneratorPainter extends CustomPainter {
     final ui.ParagraphBuilder paragraphBuilder =
         ui.ParagraphBuilder(ui.ParagraphStyle(textAlign: TextAlign.left))
           ..pushStyle(style)
-          ..addText(_hourAndMinToDisplay(time));
+          ..addText(_hourAndMinToDisplay(time, is24HourFormat));
     canvas.drawParagraph(
         paragraphBuilder.build()
           ..layout(ui.ParagraphConstraints(width: size.width)),
@@ -267,8 +284,11 @@ class _ClockFaceGeneratorPainter extends CustomPainter {
 
   double _hourAndMinFontSize(Size size) => size.shortestSide * 0.1;
 
-  String _hourAndMinToDisplay(DateTime time) =>
-      "${time.hour} : ${time.minute > 9 ? time.minute : "0${time.minute}"}";
+  String _hourAndMinToDisplay(DateTime time, bool is24HourFormat) {
+    final hour = DateFormat(is24HourFormat ? 'HH' : 'hh').format(time);
+    final minute = DateFormat('mm').format(time);
+    return "$hour : $minute";
+  }
 
   ui.Offset _calculateSecondOffset(
       ui.Offset position, int second, double secondsFontSize) {
