@@ -113,7 +113,7 @@ class ClockState extends State<Clock> with TickerProviderStateMixin {
     _animateLight();
     final position = _lightOffset.value;
     _imageBumpMapper.update(
-        position.dx.toInt(), position.dy.toInt(), _lightRadius);
+        position.dx.toInt(), position.dy.toInt(), _lightRadius, _weatherConditionToLightColor(widget.weatherCondition));
 
     return pixelsToImage(_imageBumpMapper.getPixelsBuffer(), size.width.toInt(),
         size.height.toInt());
@@ -187,6 +187,34 @@ class ClockState extends State<Clock> with TickerProviderStateMixin {
 
   bool _hasOrientationChanged(BuildContext context) {
     return _currentOrientation != MediaQuery.of(context).orientation;
+  }
+
+  LightColor _weatherConditionToLightColor(WeatherCondition condition) {
+    LightColor color;
+    switch(condition) {
+      case WeatherCondition.cloudy:
+        color = LightColor.violet;
+        break;
+      case WeatherCondition.foggy:
+        color = LightColor.violet;
+        break;
+      case WeatherCondition.rainy:
+        color = LightColor.coldblue;
+        break;
+      case WeatherCondition.snowy:
+        color = LightColor.iceblue;
+        break;
+      case WeatherCondition.sunny:
+        color = LightColor.orange;
+        break;
+      case WeatherCondition.thunderstorm:
+        color = LightColor.coldblue;
+        break;
+      case WeatherCondition.windy:
+        color = LightColor.violet;
+        break;
+    }
+    return color;
   }
 }
 

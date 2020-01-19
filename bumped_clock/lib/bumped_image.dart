@@ -3,6 +3,10 @@ import 'dart:typed_data';
 import 'package:vector_math/vector_math.dart';
 import 'package:flutter/painting.dart';
 
+enum LightColor {
+  violet, coldblue, iceblue, orange, yellow
+}
+
 class ImageBumpMapper {
   final ByteData _bytes; // assumes rgba format
   final int _width;
@@ -47,7 +51,7 @@ class ImageBumpMapper {
     _pixels = Int32List(_width * _height);
   }
 
-  void update(int lightX, int lightY, int lightRadius) {
+  void update(int lightX, int lightY, int lightRadius, LightColor lightColor) {
     for (var i = 0; i < _height; i++) {
       for (var j = 0; j < _width; j++) {
         final normalVector = _normals[i][j];
@@ -63,6 +67,7 @@ class ImageBumpMapper {
 
         pixel.applyLight(light);
         pixel.applyShade(shade);
+        pixel.applyColors(lightColor);
 
         final int index = i * _width + j;
         _pixels[index] = pixel.toColor().value;
@@ -115,8 +120,42 @@ class _Pixel {
     b -= shade;
   }
 
-  void appplyColors() {
-    // placeholder for now
+  void applyColors(LightColor color) {
+    if (color == null) {
+      return;
+    }
+    double redFactor = 1.0;
+    double blueFactor = 1.0;
+    double greenFactor = 1.0;
+    switch(color) {
+      case LightColor.violet:
+        blueFactor = 1.4;
+        break;
+      case LightColor.coldblue:
+        blueFactor = 1.9;
+        greenFactor = 1.2;
+        redFactor = 0.7;
+      break;
+      case LightColor.iceblue:
+        blueFactor = 2.0;
+        greenFactor = 1.4;
+        redFactor = 0.5;
+        break;
+      case LightColor.orange:
+          redFactor = 1.6;
+          greenFactor = 1.25;
+          blueFactor = 0.5;
+        break;
+      case LightColor.yellow:
+          redFactor = 1.25;
+          greenFactor = 1.25;
+          blueFactor = 0.5;
+        break;
+    }
+
+    r = (r * redFactor).floor();
+    b = (b * blueFactor).floor();
+    g = (g * greenFactor).floor();
   }
 
   Color toColor() {
