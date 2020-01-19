@@ -57,8 +57,10 @@ class _BumpedClockState extends State<BumpedClock> {
   void _updateModel() {
     setState(() {
       _condition = widget.model.weatherCondition;
-      _is24HoursFormat = widget.model.is24HourFormat;
-      _shouldReload = true;
+      if (widget.model.is24HourFormat != _is24HoursFormat) {
+        _shouldReload = true;
+        _is24HoursFormat = widget.model.is24HourFormat;
+      }
     });
   }
 
