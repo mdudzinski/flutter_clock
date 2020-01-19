@@ -8,13 +8,12 @@ import 'clock_helpers.dart';
 import 'image_bump_mapper.dart';
 
 class BumpedClock extends StatefulWidget {
-  const BumpedClock(
-      {this.shouldReload = false,
-      @required this.time,
-      this.is24HourFormat = false,
-      @required this.weatherCondition,
-      })
-      : assert(time != null),
+  const BumpedClock({
+    this.shouldReload = false,
+    @required this.time,
+    this.is24HourFormat = false,
+    @required this.weatherCondition,
+  })  : assert(time != null),
         assert(weatherCondition != null);
   final bool shouldReload;
   final DateTime time;
@@ -26,7 +25,8 @@ class BumpedClock extends StatefulWidget {
   }
 }
 
-class BumpedClockState extends State<BumpedClock> with TickerProviderStateMixin {
+class BumpedClockState extends State<BumpedClock>
+    with TickerProviderStateMixin {
   // bool shouldReload;
   // bool is24HourFormat;
   // WeatherCondition weatherCondition;
@@ -86,7 +86,8 @@ class BumpedClockState extends State<BumpedClock> with TickerProviderStateMixin 
       if (renderBox.hasSize) {
         _size = renderBox.size;
       } else {
-        return Size.zero; // similar as above, getting size returns an exception if hasSize returns false
+        return Size
+            .zero; // similar as above, getting size returns an exception if hasSize returns false
       }
     }
     return _size;
@@ -112,8 +113,8 @@ class BumpedClockState extends State<BumpedClock> with TickerProviderStateMixin 
 
     _animateLight();
     final position = _lightOffset.value;
-    _imageBumpMapper.update(
-        position.dx.toInt(), position.dy.toInt(), _lightRadius, _weatherConditionToLightColor(widget.weatherCondition));
+    _imageBumpMapper.update(position.dx.toInt(), position.dy.toInt(),
+        _lightRadius, _weatherConditionToLightColor(widget.weatherCondition));
 
     return pixelsToImage(_imageBumpMapper.getPixelsBuffer(), size.width.toInt(),
         size.height.toInt());
@@ -136,20 +137,19 @@ class BumpedClockState extends State<BumpedClock> with TickerProviderStateMixin 
   void _animateLight() {
     final center = (Offset.zero & _getSize()).center;
     if (_lightMovementController == null) {
-      final endOffset =
-          positionOnTheClockCircum(nextSecondOnTheClock(widget.time.second), _getSize());
-      _setupController(nextSecondOnTheClock(widget.time.second) -
-          widget.time
-              .second); // ensure the time is accurate by checking how many seconds left for the light to get to the next digit on the clock
+      final endOffset = positionOnTheClockCircum(
+          nextSecondOnTheClock(widget.time.second), _getSize());
+      _setupController(
+          _calculateInitialAnimationDuration(widget.time)); // ensure the time is accurate by checking how many seconds left for the light to get to the next digit on the clock
       _setupTween((Offset.zero & _getSize()).center, endOffset);
       _lightMovementController.forward();
       _lightMovementController.addListener(() => setState(() {}));
     } else if (_lightMovementController.status != AnimationStatus.forward) {
       // it may happen that the first animation hasn't started at this point (it has status dismissed) so we can't check only for status completed here
-      _setupController(5);
+      _setupController(5000);
       final startOffset = _lightOffset.value;
-      final endOffset =
-          positionOnTheClockCircum(nextSecondOnTheClock(widget.time.second), _getSize());
+      final endOffset = positionOnTheClockCircum(
+          nextSecondOnTheClock(widget.time.second), _getSize());
 
       _lightOffset = TweenSequence(<TweenSequenceItem<Offset>>[
         TweenSequenceItem<Offset>(
@@ -168,9 +168,16 @@ class BumpedClockState extends State<BumpedClock> with TickerProviderStateMixin 
     }
   }
 
+  // For the initial animation we need to know the amount of millis between now and the next second displayed on the clock
+  int _calculateInitialAnimationDuration(DateTime time) {
+    return nextSecondOnTheClock(time.second) * 1000 -
+        time.second * 1000 +
+        time.millisecond;
+  }
+
   void _setupController(int duration) {
     _lightMovementController =
-        AnimationController(vsync: this, duration: Duration(seconds: duration));
+        AnimationController(vsync: this, duration: Duration(milliseconds: duration));
   }
 
   void _setupTween(Offset begin, Offset end) {
@@ -191,7 +198,7 @@ class BumpedClockState extends State<BumpedClock> with TickerProviderStateMixin 
 
   LightColor _weatherConditionToLightColor(WeatherCondition condition) {
     LightColor color;
-    switch(condition) {
+    switch (condition) {
       case WeatherCondition.cloudy:
         color = LightColor.violet;
         break;
