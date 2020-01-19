@@ -16,17 +16,17 @@ double secondsRadius(Size size) {
   return size.shortestSide * 0.3;
 }
 
-int nextDigit(int second) {
+int nextSecondOnTheClock(int second) {
   if (second >= 55) {
     return 0;
   }
   return second + (5 - (second % 5));
 }
 
-Offset positionForDigit(int digit, Size size) {
+Offset positionOnTheClockCircum(int second, Size size) {
   final length = secondsRadius(size);
   final center = (Offset.zero & size).center;
-  final radian = digit * radiansPerTick - math.pi / 2.0;
+  final radian = second * radiansPerTick - math.pi / 2.0;
   return center + Offset(math.cos(radian), math.sin(radian)) * length;
 }
 
