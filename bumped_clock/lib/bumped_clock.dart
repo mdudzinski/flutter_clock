@@ -86,17 +86,20 @@ class BumpedClockState extends State<BumpedClock>
       if (renderBox.hasSize) {
         _size = renderBox.size;
       } else {
-        return Size
-            .zero; // similar as above, getting size returns an exception if hasSize returns false
+        // similar as above, getting size returns an exception if hasSize returns false
+        return Size.zero; 
       }
     }
     return _size;
   }
 
   Future<ui.Image> _process(Size size) async {
+    if (size == Size.zero) {
+      return Future<ui.Image>.value(null);
+    }
     if (_hasHourOrMinuteChanged()) {
-      _imageBumpMapper =
-          null; // force generation of a new clock face with updated hour and minute
+      // force generation of a new clock face with updated hour and minute
+      _imageBumpMapper = null;
     }
     if (_imageBumpMapper == null) {
       final ui.Image face = await _generateClockFace(size);
