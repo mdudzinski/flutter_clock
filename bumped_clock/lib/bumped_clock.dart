@@ -27,9 +27,6 @@ class BumpedClock extends StatefulWidget {
 
 class BumpedClockState extends State<BumpedClock>
     with TickerProviderStateMixin {
-  // bool shouldReload;
-  // bool is24HourFormat;
-  // WeatherCondition weatherCondition;
   // Needed to determine the available size for the clock face generation
   GlobalKey _key = GlobalKey();
   Size _size;
