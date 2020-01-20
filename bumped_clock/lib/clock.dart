@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 
 import 'bumped_clock.dart';
 
-
 /// Based on the analog clock from the examples.
 class Clock extends StatefulWidget {
   const Clock(this.model);
@@ -72,7 +71,8 @@ class _ClockState extends State<Clock> {
       // Update once per 5 seconds. Make sure to do it at the beginning of each
       // new second, so that the clock is accurate.
       _timer = Timer(
-        Duration(seconds: 5) - Duration(seconds: _now.second, milliseconds: _now.millisecond),
+        Duration(seconds: 5) -
+            Duration(seconds: _now.second, milliseconds: _now.millisecond),
         _updateTime,
       );
     });
@@ -87,11 +87,13 @@ class _ClockState extends State<Clock> {
         label: 'Bumped clock with time $time',
         value: time,
       ),
-      child: OrientationBuilder(
-        builder: (context, orientation) {
-           return  Container(
-            child: BumpedClock(time: _now, weatherCondition: _condition, is24HourFormat: _is24HoursFormat, shouldReload: _shouldReload,));
-      }),
+      child: Container(
+          child: BumpedClock(
+        time: _now,
+        weatherCondition: _condition,
+        is24HourFormat: _is24HoursFormat,
+        shouldReload: _shouldReload,
+      )),
     );
   }
 }
