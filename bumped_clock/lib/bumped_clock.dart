@@ -139,14 +139,14 @@ class BumpedClockState extends State<BumpedClock>
     if (_lightMovementController == null) {
       final endOffset = positionOnTheClockCircum(
           nextSecondOnTheClock(widget.time.second), _getSize());
-      _setupController(_calculateInitialAnimationDuration(widget
+      _setupController(_calculateAnimationDuration(widget
           .time)); // ensure the time is accurate by checking how many seconds left for the light to get to the next digit on the clock
       _setupTween((Offset.zero & _getSize()).center, endOffset);
       _lightMovementController.forward();
       _lightMovementController.addListener(() => setState(() {}));
     } else if (_lightMovementController.status != AnimationStatus.forward) {
       // it may happen that the first animation hasn't started at this point (it has status dismissed) so we can't check only for status completed here
-      _setupController(5000);
+      _setupController(_calculateAnimationDuration(widget.time));
       final startOffset = _lightOffset.value;
       final endOffset = positionOnTheClockCircum(
           nextSecondOnTheClock(widget.time.second), _getSize());
@@ -168,8 +168,9 @@ class BumpedClockState extends State<BumpedClock>
     }
   }
 
-  // For the initial animation we need to know the amount of millis between now and the next second displayed on the clock
-  int _calculateInitialAnimationDuration(DateTime time) {
+  // For the animation we need to know the amount of millis between now and the next second displayed on the clock
+  // to ensure the light animation is in sync with seconds
+  int _calculateAnimationDuration(DateTime time) {
     return nextSecondOnTheClock(time.second) * 1000 -
         time.second * 1000 +
         time.millisecond;
