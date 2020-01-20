@@ -9,13 +9,11 @@ import 'image_bump_mapper.dart';
 
 class BumpedClock extends StatefulWidget {
   const BumpedClock({
-    this.shouldReload = false,
     @required this.time,
-    this.is24HourFormat = false,
+    this.is24HourFormat = true,
     @required this.weatherCondition,
   })  : assert(time != null),
         assert(weatherCondition != null);
-  final bool shouldReload; // TODO: this seems to be bad, something smarter is needed to avoid explicit flag for whether the widget should regenerate the image for bump mapping
   final DateTime time;
   final bool is24HourFormat;
   final WeatherCondition weatherCondition;
@@ -30,17 +28,18 @@ class BumpedClockState extends State<BumpedClock>
   // Needed to determine the available size for the clock face generation
   GlobalKey _key = GlobalKey();
   Size _size;
-  Orientation _currentOrientation;
   ImageBumpMapper _imageBumpMapper;
   int _lightRadius;
   AnimationController _lightMovementController;
   Animation<Offset> _lightOffset;
 
   DateTime _currentHourAndMin;
+  Orientation _currentOrientation;
+  bool _is24HourFormat;
 
   @override
   Widget build(BuildContext context) {
-    if (widget.shouldReload || _hasOrientationChanged(context)) {
+    if (_hasDisplayFormatChanged() || _hasOrientationChanged(context)) {
       _reload(MediaQuery.of(context).orientation);
     }
 
@@ -71,6 +70,7 @@ class BumpedClockState extends State<BumpedClock>
     _size = null;
     _lightRadius = null;
     _currentOrientation = orientation;
+    _is24HourFormat = widget.is24HourFormat;
   }
 
   Size _getSize() {
@@ -194,6 +194,10 @@ class BumpedClockState extends State<BumpedClock>
 
   bool _hasOrientationChanged(BuildContext context) {
     return _currentOrientation != MediaQuery.of(context).orientation;
+  }
+
+  bool _hasDisplayFormatChanged() {
+    return _is24HourFormat != widget.is24HourFormat;
   }
 
   LightColor _weatherConditionToLightColor(WeatherCondition condition) {

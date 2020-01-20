@@ -25,7 +25,6 @@ class _ClockState extends State<Clock> {
   var _now = DateTime.now();
   var _condition;
   bool _is24HoursFormat;
-  bool _shouldReload;
   Orientation currentOrientation;
   Timer _timer;
 
@@ -57,17 +56,13 @@ class _ClockState extends State<Clock> {
   void _updateModel() {
     setState(() {
       _condition = widget.model.weatherCondition;
-      if (widget.model.is24HourFormat != _is24HoursFormat) {
-        _shouldReload = true;
-        _is24HoursFormat = widget.model.is24HourFormat;
-      }
+      _is24HoursFormat = widget.model.is24HourFormat;
     });
   }
 
   void _updateTime() {
     setState(() {
       _now = DateTime.now();
-      _shouldReload = false;
       // Update once per 5 seconds. Make sure to do it at the beginning of each
       // new second, so that the clock is accurate.
       _timer = Timer(
@@ -92,7 +87,6 @@ class _ClockState extends State<Clock> {
         time: _now,
         weatherCondition: _condition,
         is24HourFormat: _is24HoursFormat,
-        shouldReload: _shouldReload,
       )),
     );
   }
