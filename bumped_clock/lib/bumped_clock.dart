@@ -84,7 +84,7 @@ class BumpedClockState extends State<BumpedClock>
         _size = renderBox.size;
       } else {
         // similar as above, getting size returns an exception if hasSize returns false
-        return Size.zero; 
+        return Size.zero;
       }
     }
     return _size;
@@ -139,8 +139,8 @@ class BumpedClockState extends State<BumpedClock>
     if (_lightMovementController == null) {
       final endOffset = positionOnTheClockCircum(
           nextSecondOnTheClock(widget.time.second), _getSize());
-      _setupController(
-          _calculateInitialAnimationDuration(widget.time)); // ensure the time is accurate by checking how many seconds left for the light to get to the next digit on the clock
+      _setupController(_calculateInitialAnimationDuration(widget
+          .time)); // ensure the time is accurate by checking how many seconds left for the light to get to the next digit on the clock
       _setupTween((Offset.zero & _getSize()).center, endOffset);
       _lightMovementController.forward();
       _lightMovementController.addListener(() => setState(() {}));
@@ -176,8 +176,8 @@ class BumpedClockState extends State<BumpedClock>
   }
 
   void _setupController(int duration) {
-    _lightMovementController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: duration));
+    _lightMovementController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: duration));
   }
 
   void _setupTween(Offset begin, Offset end) {

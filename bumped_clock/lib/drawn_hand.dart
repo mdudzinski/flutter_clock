@@ -113,7 +113,8 @@ class _HandPainter extends CustomPainter {
         oldDelegate.angleRadians != angleRadians ||
         oldDelegate.color != color;
   }
-Color generatePixel(int x, int y, Size size) {
-  return Color.fromRGBO(x, 0, y, 1.0);
-}
+
+  Color generatePixel(int x, int y, Size size) {
+    return Color.fromRGBO(x, 0, y, 1.0);
+  }
 }

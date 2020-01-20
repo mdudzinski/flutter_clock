@@ -3,9 +3,7 @@ import 'dart:typed_data';
 import 'package:vector_math/vector_math.dart';
 import 'package:flutter/painting.dart';
 
-enum LightColor {
-  violet, coldblue, iceblue, orange, teal, grey, yellow
-}
+enum LightColor { violet, coldblue, iceblue, orange, teal, grey, yellow }
 
 class ImageBumpMapper {
   final ByteData _bytes; // assumes rgba format
@@ -127,7 +125,7 @@ class _Pixel {
     double redFactor = 1.0;
     double blueFactor = 1.0;
     double greenFactor = 1.0;
-    switch(color) {
+    switch (color) {
       case LightColor.violet:
         blueFactor = 1.4;
         break;
@@ -135,32 +133,32 @@ class _Pixel {
         blueFactor = 1.9;
         greenFactor = 1.2;
         redFactor = 0.7;
-      break;
+        break;
       case LightColor.iceblue:
         blueFactor = 2.0;
         greenFactor = 1.4;
         redFactor = 0.5;
         break;
       case LightColor.orange:
-          redFactor = 1.8;
-          greenFactor = 1.15;
-          blueFactor = 0.5;
+        redFactor = 1.8;
+        greenFactor = 1.15;
+        blueFactor = 0.5;
         break;
       case LightColor.grey:
-          redFactor = 0.55;
-          greenFactor = 0.55;
-          blueFactor = 0.55;
+        redFactor = 0.55;
+        greenFactor = 0.55;
+        blueFactor = 0.55;
         break;
       case LightColor.teal:
-          redFactor = 0.35;
-          greenFactor = 0.55;
-          blueFactor = 0.55;
-      break;
+        redFactor = 0.35;
+        greenFactor = 0.55;
+        blueFactor = 0.55;
+        break;
       case LightColor.yellow:
-          redFactor = 1.1;
-          greenFactor = 1.05;
-          blueFactor = 0.0;
-      break;
+        redFactor = 1.1;
+        greenFactor = 1.05;
+        blueFactor = 0.0;
+        break;
     }
 
     r = (r * redFactor).floor();
