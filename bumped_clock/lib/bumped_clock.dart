@@ -15,7 +15,7 @@ class BumpedClock extends StatefulWidget {
     @required this.weatherCondition,
   })  : assert(time != null),
         assert(weatherCondition != null);
-  final bool shouldReload;
+  final bool shouldReload; // TODO: this seems to be bad, something smarter is needed to avoid explicit flag for whether the widget should regenerate the image for bump mapping
   final DateTime time;
   final bool is24HourFormat;
   final WeatherCondition weatherCondition;
