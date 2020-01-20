@@ -4,7 +4,7 @@ import 'package:vector_math/vector_math.dart';
 import 'package:flutter/painting.dart';
 
 enum LightColor {
-  violet, coldblue, iceblue, yellow
+  violet, coldblue, iceblue, orange, teal, grey, yellow
 }
 
 class ImageBumpMapper {
@@ -141,16 +141,26 @@ class _Pixel {
         greenFactor = 1.4;
         redFactor = 0.5;
         break;
-      case LightColor.yellow:
-          redFactor = 1.6;
-          greenFactor = 1.25;
+      case LightColor.orange:
+          redFactor = 1.8;
+          greenFactor = 1.15;
           blueFactor = 0.5;
         break;
-      case LightColor.yellow:
-          redFactor = 1.25;
-          greenFactor = 1.25;
-          blueFactor = 0.5;
+      case LightColor.grey:
+          redFactor = 0.55;
+          greenFactor = 0.55;
+          blueFactor = 0.55;
         break;
+      case LightColor.teal:
+          redFactor = 0.35;
+          greenFactor = 0.55;
+          blueFactor = 0.55;
+      break;
+      case LightColor.yellow:
+          redFactor = 1.1;
+          greenFactor = 1.05;
+          blueFactor = 0.0;
+      break;
     }
 
     r = (r * redFactor).floor();

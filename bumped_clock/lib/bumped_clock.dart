@@ -207,7 +207,7 @@ class BumpedClockState extends State<BumpedClock>
         color = LightColor.violet;
         break;
       case WeatherCondition.foggy:
-        color = LightColor.violet;
+        color = LightColor.grey;
         break;
       case WeatherCondition.rainy:
         color = LightColor.coldblue;
@@ -216,13 +216,13 @@ class BumpedClockState extends State<BumpedClock>
         color = LightColor.iceblue;
         break;
       case WeatherCondition.sunny:
-        color = LightColor.yellow;
+        color = LightColor.orange;
         break;
       case WeatherCondition.thunderstorm:
-        color = LightColor.coldblue;
+        color = LightColor.yellow;
         break;
       case WeatherCondition.windy:
-        color = LightColor.violet;
+        color = LightColor.teal;
         break;
     }
     return color;
