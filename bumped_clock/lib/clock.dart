@@ -84,7 +84,7 @@ class _ClockState extends State<Clock> {
 
     return Semantics.fromProperties(
       properties: SemanticsProperties(
-        label: 'BUmped clock with time $time',
+        label: 'Bumped clock with time $time',
         value: time,
       ),
       child: OrientationBuilder(
