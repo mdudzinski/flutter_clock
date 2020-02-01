@@ -1,15 +1,21 @@
 # Flutter Clock
 
-Welcome to Flutter Clock!
+My clock face for the [Flutter Clock challenge](https://flutter.dev/clock).
 
-See [flutter.dev/clock](https://flutter.dev/clock) for how to get started, submission requirements, contest rules, and FAQs.
+The app is located in the [bumped_clock](bumped_clock) directory.
 
-See a [live demo](https://maryx.github.io/flutter_clock) with Flutter for Web!
+The clock is rendered using a 2D bump mapping technique. Everything is procedurally generated and there are no assets. It responds to the clock format and weather condition changes.
+It has been built on the top of the [Analog Clock](analog_clock) and has no additional external dependencies (only those used by the example Analog Clock).
 
-Example [Analog Clock](analog_clock)
+The preview of the app running on iPhone 7 Plus:
 
-<img src='analog_clock/analog.gif' width='350'>
+### Screenshot:
 
-Example [Digital Clock](digital_clock)
+<img src='bumped_clock_screenshot_rainy_coldblue.png' width='600'>
 
-<img src='digital_clock/digital.gif' width='350'>
+### GIF:
+
+<img src='bumped_clock.gif' width='600'>
+
+### Video:
+[Video](./bumped_clock.MP4)
